@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\File;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 beforeEach(function () {
-    $this->fileManager = new TranslationFileManager();
+    $this->fileManager = new TranslationFileManager;
     $this->exporter = new TranslationExporter($this->fileManager);
-    $this->outputPath = sys_get_temp_dir() . '/test_export_' . uniqid() . '.xlsx';
+    $this->outputPath = sys_get_temp_dir().'/test_export_'.uniqid().'.xlsx';
 });
 
 afterEach(function () {

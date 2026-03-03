@@ -17,7 +17,7 @@ class I18nCommand extends Command
                             {--input= : Input file path (for import)}
                             {--overwrite : Overwrite existing translations (for import)}';
 
-    protected $description = "Manage translation files (scan, export, import)";
+    protected $description = 'Manage translation files (scan, export, import)';
 
     public function handle(
         TranslationScanner $translationScanner,
@@ -25,18 +25,18 @@ class I18nCommand extends Command
         TranslationExporter $translationExporter,
         TranslationImporter $translationImporter,
     ): int {
-        $action = $this->argument("action");
+        $action = $this->argument('action');
 
         return match ($action) {
-            "scan" => $this->handleScan(
+            'scan' => $this->handleScan(
                 $translationScanner,
                 $translationFileManager,
             ),
-            "export" => $this->handleExport($translationExporter),
-            "import" => $this->handleImport($translationImporter),
+            'export' => $this->handleExport($translationExporter),
+            'import' => $this->handleImport($translationImporter),
             default => $this->error(
                 sprintf(
-                    "Invalid action: %s. Use: scan, export, or import.",
+                    'Invalid action: %s. Use: scan, export, or import.',
                     $action,
                 ),
             ) ?? 1,
@@ -47,26 +47,26 @@ class I18nCommand extends Command
         TranslationScanner $translationScanner,
         TranslationFileManager $translationFileManager,
     ): int {
-        $this->info("Scanning for translation keys...");
+        $this->info('Scanning for translation keys...');
 
         $foundKeys = $translationScanner->scan();
-        $locales = $this->option("locale")
-            ? [$this->option("locale")]
+        $locales = $this->option('locale')
+            ? [$this->option('locale')]
             : $translationFileManager->getAvailableLocales();
 
         if ($locales === []) {
             $this->error(
-                "No locales found. Please create at least one locale directory in lang/",
+                'No locales found. Please create at least one locale directory in lang/',
             );
 
             return 1;
         }
 
         $stats = [
-            "total_keys" => count($foundKeys),
-            "files_created" => 0,
-            "keys_added" => 0,
-            "keys_existing" => 0,
+            'total_keys' => count($foundKeys),
+            'files_created' => 0,
+            'keys_added' => 0,
+            'keys_existing' => 0,
         ];
 
         foreach (array_keys($foundKeys) as $key) {
@@ -75,66 +75,66 @@ class I18nCommand extends Command
             foreach ($locales as $locale) {
                 $fileExists = $translationFileManager->fileExists(
                     $locale,
-                    $parsed["file"],
+                    $parsed['file'],
                 );
 
-                if ($parsed["key"] === null) {
+                if ($parsed['key'] === null) {
                     // Simple key without nested structure
                     continue;
                 }
 
-                if (!$fileExists) {
-                    $stats["files_created"]++;
+                if (! $fileExists) {
+                    $stats['files_created']++;
                     $translationFileManager->addKey(
                         $locale,
-                        $parsed["file"],
-                        $parsed["key"],
+                        $parsed['file'],
+                        $parsed['key'],
                     );
-                    $stats["keys_added"]++;
+                    $stats['keys_added']++;
                     $this->line(
                         sprintf(
-                            "  <fg=green>✓</> Created %s/%s.php -> %s",
+                            '  <fg=green>✓</> Created %s/%s.php -> %s',
                             $locale,
-                            $parsed["file"],
-                            $parsed["key"],
+                            $parsed['file'],
+                            $parsed['key'],
                         ),
                     );
                 } elseif (
-                    !$translationFileManager->keyExists(
+                    ! $translationFileManager->keyExists(
                         $locale,
-                        $parsed["file"],
-                        $parsed["key"],
+                        $parsed['file'],
+                        $parsed['key'],
                     )
                 ) {
                     $translationFileManager->addKey(
                         $locale,
-                        $parsed["file"],
-                        $parsed["key"],
+                        $parsed['file'],
+                        $parsed['key'],
                     );
-                    $stats["keys_added"]++;
+                    $stats['keys_added']++;
                     $this->line(
                         sprintf(
-                            "  <fg=green>+</> Added %s/%s.php -> %s",
+                            '  <fg=green>+</> Added %s/%s.php -> %s',
                             $locale,
-                            $parsed["file"],
-                            $parsed["key"],
+                            $parsed['file'],
+                            $parsed['key'],
                         ),
                     );
                 } else {
-                    $stats["keys_existing"]++;
+                    $stats['keys_existing']++;
                 }
             }
         }
 
         $this->newLine();
-        $this->info("Scan complete!");
+        $this->info('Scan complete!');
         $this->table(
-            ["Metric", "Count"],
+            ['Metric', 'Count'],
             [
-                ["Total keys found", $stats["total_keys"]],
-                ["Files created", $stats["files_created"]],
-                ["Keys added", $stats["keys_added"]],
-                ["Keys already existing", $stats["keys_existing"]],
+                ['Total keys found', $stats['total_keys']],
+                ['Files created', $stats['files_created']],
+                ['Keys added', $stats['keys_added']],
+                ['Keys already existing', $stats['keys_existing']],
             ],
         );
 
@@ -145,20 +145,20 @@ class I18nCommand extends Command
         TranslationExporter $translationExporter,
     ): int {
         $output =
-            $this->option("output") ?? storage_path("app/translations.xlsx");
+            $this->option('output') ?? storage_path('app/translations.xlsx');
 
-        $this->info("Exporting translations to: " . $output);
+        $this->info('Exporting translations to: '.$output);
 
         $result = $translationExporter->export($output);
 
         $this->newLine();
-        $this->info("Export complete!");
+        $this->info('Export complete!');
         $this->table(
-            ["Metric", "Count"],
+            ['Metric', 'Count'],
             [
-                ["Locales", $result["locales"]],
-                ["Total rows", $result["rows"]],
-                ["Output file", $result["file"]],
+                ['Locales', $result['locales']],
+                ['Total rows', $result['rows']],
+                ['Output file', $result['file']],
             ],
         );
 
@@ -169,19 +169,19 @@ class I18nCommand extends Command
         TranslationImporter $translationImporter,
     ): int {
         $input =
-            $this->option("input") ?? storage_path("app/translations.xlsx");
-        $overwrite = $this->option("overwrite");
+            $this->option('input') ?? storage_path('app/translations.xlsx');
+        $overwrite = $this->option('overwrite');
 
-        if (!file_exists($input)) {
-            $this->error("Input file not found: " . $input);
+        if (! file_exists($input)) {
+            $this->error('Input file not found: '.$input);
 
             return 1;
         }
 
-        $mode = $overwrite ? "overwrite" : "merge";
+        $mode = $overwrite ? 'overwrite' : 'merge';
         $this->info(
             sprintf(
-                "Importing translations from: %s (mode: %s)",
+                'Importing translations from: %s (mode: %s)',
                 $input,
                 $mode,
             ),
@@ -190,13 +190,13 @@ class I18nCommand extends Command
         $stats = $translationImporter->import($input, $overwrite);
 
         $this->newLine();
-        $this->info("Import complete!");
+        $this->info('Import complete!');
         $this->table(
-            ["Metric", "Count"],
+            ['Metric', 'Count'],
             [
-                ["Files created", $stats["files_created"]],
-                ["Keys added", $stats["keys_added"]],
-                ["Keys updated", $stats["keys_updated"]],
+                ['Files created', $stats['files_created']],
+                ['Keys added', $stats['keys_added']],
+                ['Keys updated', $stats['keys_updated']],
             ],
         );
 

@@ -2,9 +2,9 @@
 
 namespace Beliven\I18n;
 
+use Beliven\I18n\Commands\I18nCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Beliven\I18n\Commands\I18nCommand;
 
 class I18nServiceProvider extends PackageServiceProvider
 {
@@ -15,6 +15,6 @@ class I18nServiceProvider extends PackageServiceProvider
          *
          * More info: https://github.com/spatie/laravel-package-tools
          */
-        $package->name("laravel-i18n")->hasCommand(I18nCommand::class);
+        $package->name('laravel-i18n')->hasCommand(I18nCommand::class);
     }
 }

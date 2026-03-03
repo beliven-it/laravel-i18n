@@ -4,7 +4,7 @@ use Beliven\I18n\Services\TranslationFileManager;
 use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
-    $this->manager = new TranslationFileManager();
+    $this->manager = new TranslationFileManager;
     $this->testLangPath = lang_path();
 });
 
@@ -163,7 +163,7 @@ test('getFilePath returns correct path', function () {
 });
 
 test('getAvailableLocales returns empty array when lang directory does not exist', function () {
-    $tempPath = sys_get_temp_dir() . '/nonexistent_' . uniqid();
+    $tempPath = sys_get_temp_dir().'/nonexistent_'.uniqid();
 
     // Mock lang_path to return non-existent directory
     expect($this->manager->getAvailableLocales())->toBeArray();
@@ -312,7 +312,7 @@ test('saveJsonFile creates file with correct format', function () {
     $this->manager->saveJsonFile('en', ['Welcome' => 'Hello', 'Goodbye' => 'Bye']);
 
     expect(File::exists(lang_path('en.json')))->toBeTrue();
-    
+
     $content = $this->manager->loadJsonFile('en');
     expect($content)->toBe(['Welcome' => 'Hello', 'Goodbye' => 'Bye']);
 });

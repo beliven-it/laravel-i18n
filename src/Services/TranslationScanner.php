@@ -8,7 +8,7 @@ class TranslationScanner
 {
     protected array $foundKeys = [];
 
-    public function scan(array $paths = ["app", "resources"]): array
+    public function scan(array $paths = ['app', 'resources']): array
     {
         $this->foundKeys = [];
 
@@ -27,7 +27,7 @@ class TranslationScanner
         $files = File::allFiles($directory);
 
         foreach ($files as $file) {
-            if ($file->getExtension() === "php") {
+            if ($file->getExtension() === 'php') {
                 $this->scanFile($file->getPathname());
             }
         }
@@ -55,11 +55,11 @@ class TranslationScanner
 
     protected function addKey(string $key, string $filePath): void
     {
-        if (!isset($this->foundKeys[$key])) {
+        if (! isset($this->foundKeys[$key])) {
             $this->foundKeys[$key] = [];
         }
 
-        if (!in_array($filePath, $this->foundKeys[$key])) {
+        if (! in_array($filePath, $this->foundKeys[$key])) {
             $this->foundKeys[$key][] = $filePath;
         }
     }
@@ -67,23 +67,23 @@ class TranslationScanner
     public function parseKey(string $key): array
     {
         // Parse keys like 'clinic/detail.welcome' or 'messages.success'
-        $parts = explode(".", $key);
+        $parts = explode('.', $key);
 
         if (count($parts) === 1) {
             // Simple key without dot notation (e.g., 'Welcome', 'My Translation')
             // These should go to JSON file
             return [
-                "type" => "json",
-                "file" => null,
-                "key" => $key,
+                'type' => 'json',
+                'file' => null,
+                'key' => $key,
             ];
         }
 
         // Keys with dots go to PHP files (e.g., 'messages.welcome.user')
         return [
-            "type" => "php",
-            "file" => $parts[0],
-            "key" => implode(".", array_slice($parts, 1)),
+            'type' => 'php',
+            'file' => $parts[0],
+            'key' => implode('.', array_slice($parts, 1)),
         ];
     }
 }

@@ -22,9 +22,9 @@ class TranslationExporter
         $this->writeExcel($data, $outputPath);
 
         return [
-            "locales" => count($locales),
-            "rows" => count($data),
-            "file" => $outputPath,
+            'locales' => count($locales),
+            'rows' => count($data),
+            'file' => $outputPath,
         ];
     }
 
@@ -42,10 +42,10 @@ class TranslationExporter
 
                 foreach ($jsonTranslations as $key => $value) {
                     $data[] = [
-                        "locale" => $locale,
-                        "path" => sprintf("lang/%s.json", $locale),
-                        "key" => $key,
-                        "value" => $value ?? "",
+                        'locale' => $locale,
+                        'path' => sprintf('lang/%s.json', $locale),
+                        'key' => $key,
+                        'value' => $value ?? '',
                     ];
                 }
             }
@@ -59,10 +59,10 @@ class TranslationExporter
 
                 foreach ($flattened as $key => $value) {
                     $data[] = [
-                        "locale" => $locale,
-                        "path" => sprintf("lang/%s/%s.php", $locale, $file),
-                        "key" => $key,
-                        "value" => $value ?? "",
+                        'locale' => $locale,
+                        'path' => sprintf('lang/%s/%s.php', $locale, $file),
+                        'key' => $key,
+                        'value' => $value ?? '',
                     ];
                 }
             }
@@ -73,30 +73,30 @@ class TranslationExporter
 
     protected function writeExcel(array $data, string $outputPath): void
     {
-        $spreadsheet = new Spreadsheet();
+        $spreadsheet = new Spreadsheet;
         $worksheet = $spreadsheet->getActiveSheet();
 
         // Headers
-        $worksheet->setCellValue("A1", "Locale");
-        $worksheet->setCellValue("B1", "Path");
-        $worksheet->setCellValue("C1", "Key");
-        $worksheet->setCellValue("D1", "Value");
+        $worksheet->setCellValue('A1', 'Locale');
+        $worksheet->setCellValue('B1', 'Path');
+        $worksheet->setCellValue('C1', 'Key');
+        $worksheet->setCellValue('D1', 'Value');
 
         // Style headers
-        $worksheet->getStyle("A1:D1")->getFont()->setBold(true);
+        $worksheet->getStyle('A1:D1')->getFont()->setBold(true);
 
         // Data
         $row = 2;
         foreach ($data as $item) {
-            $worksheet->setCellValue("A" . $row, $item["locale"]);
-            $worksheet->setCellValue("B" . $row, $item["path"]);
-            $worksheet->setCellValue("C" . $row, $item["key"]);
-            $worksheet->setCellValue("D" . $row, $item["value"]);
+            $worksheet->setCellValue('A'.$row, $item['locale']);
+            $worksheet->setCellValue('B'.$row, $item['path']);
+            $worksheet->setCellValue('C'.$row, $item['key']);
+            $worksheet->setCellValue('D'.$row, $item['value']);
             $row++;
         }
 
         // Auto-size columns
-        foreach (["A", "B", "C", "D"] as $column) {
+        foreach (['A', 'B', 'C', 'D'] as $column) {
             $worksheet->getColumnDimension($column)->setAutoSize(true);
         }
 

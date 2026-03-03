@@ -17,11 +17,12 @@ class TranslationFileManager
     {
         $path = $this->getJsonFilePath($locale);
 
-        if (!File::exists($path)) {
+        if (! File::exists($path)) {
             return [];
         }
 
         $content = File::get($path);
+
         return json_decode($content, true) ?? [];
     }
 
@@ -30,7 +31,7 @@ class TranslationFileManager
         $path = $this->getJsonFilePath($locale);
         $directory = dirname($path);
 
-        if (!File::exists($directory)) {
+        if (! File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
 
@@ -48,12 +49,13 @@ class TranslationFileManager
     public function jsonKeyExists(string $locale, string $key): bool
     {
         $translations = $this->loadJsonFile($locale);
+
         return array_key_exists($key, $translations);
     }
 
     public function getJsonFilePath(string $locale): string
     {
-        return lang_path(sprintf("%s.json", $locale));
+        return lang_path(sprintf('%s.json', $locale));
     }
 
     public function fileExists(string $locale, string $file): bool
@@ -63,7 +65,7 @@ class TranslationFileManager
 
     public function keyExists(string $locale, string $file, string $key): bool
     {
-        if (!$this->fileExists($locale, $file)) {
+        if (! $this->fileExists($locale, $file)) {
             return false;
         }
 
@@ -76,7 +78,7 @@ class TranslationFileManager
     {
         $path = $this->getFilePath($locale, $file);
 
-        if (!File::exists($path)) {
+        if (! File::exists($path)) {
             return [];
         }
 
@@ -91,7 +93,7 @@ class TranslationFileManager
         $path = $this->getFilePath($locale, $file);
         $directory = dirname($path);
 
-        if (!File::exists($directory)) {
+        if (! File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
 
@@ -116,7 +118,7 @@ class TranslationFileManager
 
     public function getFilePath(string $locale, string $file): string
     {
-        return lang_path(sprintf("%s/%s.php", $locale, $file));
+        return lang_path(sprintf('%s/%s.php', $locale, $file));
     }
 
     /**
@@ -127,22 +129,22 @@ class TranslationFileManager
         $langPath = lang_path();
         $locales = [];
 
-        if (!File::exists($langPath)) {
+        if (! File::exists($langPath)) {
             return $locales;
         }
 
         // Get locales from directories
         foreach (File::directories($langPath) as $directory) {
             $locale = basename((string) $directory);
-            if ($locale !== "vendor") {
+            if ($locale !== 'vendor') {
                 $locales[] = $locale;
             }
         }
 
         // Get locales from JSON files
-        foreach (File::glob($langPath . '/*.json') as $jsonFile) {
+        foreach (File::glob($langPath.'/*.json') as $jsonFile) {
             $locale = basename($jsonFile, '.json');
-            if (!in_array($locale, $locales)) {
+            if (! in_array($locale, $locales)) {
                 $locales[] = $locale;
             }
         }
@@ -155,7 +157,7 @@ class TranslationFileManager
         $localePath = lang_path($locale);
         $files = [];
 
-        if (!File::exists($localePath)) {
+        if (! File::exists($localePath)) {
             return $files;
         }
 
@@ -163,23 +165,23 @@ class TranslationFileManager
 
         foreach ($allFiles as $allFile) {
             $relativePath = str_replace(
-                $localePath . "/",
-                "",
+                $localePath.'/',
+                '',
                 $allFile->getPathname(),
             );
-            $relativePath = str_replace(".php", "", $relativePath);
+            $relativePath = str_replace('.php', '', $relativePath);
             $files[] = $relativePath;
         }
 
         return $files;
     }
 
-    public function flattenArray(array $array, string $prefix = ""): array
+    public function flattenArray(array $array, string $prefix = ''): array
     {
         $result = [];
 
         foreach ($array as $key => $value) {
-            $newKey = $prefix === "" ? $key : sprintf("%s.%s", $prefix, $key);
+            $newKey = $prefix === '' ? $key : sprintf('%s.%s', $prefix, $key);
 
             if (is_array($value)) {
                 $result = array_merge(
@@ -207,13 +209,13 @@ class TranslationFileManager
 
     protected function arrayToPhpFile(array $array, int $indent = 0): string
     {
-        $content = $indent === 0 ? "<?php\n\nreturn " : "";
+        $content = $indent === 0 ? "<?php\n\nreturn " : '';
 
         $content .= "[\n";
 
         foreach ($array as $key => $value) {
-            $spaces = str_repeat("    ", $indent + 1);
-            $content .= $spaces . var_export($key, true) . " => ";
+            $spaces = str_repeat('    ', $indent + 1);
+            $content .= $spaces.var_export($key, true).' => ';
 
             if (is_array($value)) {
                 $content .= $this->arrayToPhpFile($value, $indent + 1);
@@ -224,8 +226,8 @@ class TranslationFileManager
             $content .= ",\n";
         }
 
-        $spaces = str_repeat("    ", $indent);
-        $content .= $spaces . "]";
+        $spaces = str_repeat('    ', $indent);
+        $content .= $spaces.']';
 
         if ($indent === 0) {
             $content .= ";\n";
@@ -236,10 +238,10 @@ class TranslationFileManager
 
     protected function runPint(string $filePath): void
     {
-        $pintPath = base_path("vendor/bin/pint");
+        $pintPath = base_path('vendor/bin/pint');
 
         if (File::exists($pintPath)) {
-            Process::run([$pintPath, $filePath, "--quiet"]);
+            Process::run([$pintPath, $filePath, '--quiet']);
         }
     }
 }

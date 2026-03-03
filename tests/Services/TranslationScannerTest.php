@@ -4,8 +4,8 @@ use Beliven\I18n\Services\TranslationScanner;
 use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
-    $this->scanner = new TranslationScanner();
-    $this->testPath = 'test_scan_' . uniqid();
+    $this->scanner = new TranslationScanner;
+    $this->testPath = 'test_scan_'.uniqid();
     $this->testFullPath = base_path($this->testPath);
 });
 
@@ -17,7 +17,7 @@ afterEach(function () {
 
 test('scan returns empty array when no translation keys found', function () {
     File::ensureDirectoryExists($this->testFullPath);
-    File::put($this->testFullPath . '/test.php', '<?php echo "no translations here";');
+    File::put($this->testFullPath.'/test.php', '<?php echo "no translations here";');
 
     $result = $this->scanner->scan([$this->testPath]);
 
@@ -26,17 +26,17 @@ test('scan returns empty array when no translation keys found', function () {
 
 test('scan finds __ function calls', function () {
     File::ensureDirectoryExists($this->testFullPath);
-    File::put($this->testFullPath . '/test.php', '<?php echo __("welcome.message");');
+    File::put($this->testFullPath.'/test.php', '<?php echo __("welcome.message");');
 
     $result = $this->scanner->scan([$this->testPath]);
 
     expect($result)->toHaveKey('welcome.message');
-    expect($result['welcome.message'])->toContain($this->testFullPath . '/test.php');
+    expect($result['welcome.message'])->toContain($this->testFullPath.'/test.php');
 });
 
 test('scan finds trans function calls', function () {
     File::ensureDirectoryExists($this->testFullPath);
-    File::put($this->testFullPath . '/test.php', '<?php echo trans("auth.failed");');
+    File::put($this->testFullPath.'/test.php', '<?php echo trans("auth.failed");');
 
     $result = $this->scanner->scan([$this->testPath]);
 
@@ -45,7 +45,7 @@ test('scan finds trans function calls', function () {
 
 test('scan finds @lang directive calls', function () {
     File::ensureDirectoryExists($this->testFullPath);
-    File::put($this->testFullPath . '/view.php', '@lang("messages.welcome")');
+    File::put($this->testFullPath.'/view.php', '@lang("messages.welcome")');
 
     $result = $this->scanner->scan([$this->testPath]);
 
@@ -54,7 +54,7 @@ test('scan finds @lang directive calls', function () {
 
 test('scan finds multiple keys in same file', function () {
     File::ensureDirectoryExists($this->testFullPath);
-    File::put($this->testFullPath . '/test.php', '<?php
+    File::put($this->testFullPath.'/test.php', '<?php
         echo __("key1");
         echo __("key2");
         echo trans("key3");
@@ -69,7 +69,7 @@ test('scan finds multiple keys in same file', function () {
 
 test('scan handles single quotes', function () {
     File::ensureDirectoryExists($this->testFullPath);
-    File::put($this->testFullPath . '/test.php', "<?php echo __('messages.hello');");
+    File::put($this->testFullPath.'/test.php', "<?php echo __('messages.hello');");
 
     $result = $this->scanner->scan([$this->testPath]);
 
@@ -78,7 +78,7 @@ test('scan handles single quotes', function () {
 
 test('scan handles double quotes', function () {
     File::ensureDirectoryExists($this->testFullPath);
-    File::put($this->testFullPath . '/test.php', '<?php echo __("messages.hello");');
+    File::put($this->testFullPath.'/test.php', '<?php echo __("messages.hello");');
 
     $result = $this->scanner->scan([$this->testPath]);
 
@@ -87,8 +87,8 @@ test('scan handles double quotes', function () {
 
 test('scan processes multiple files', function () {
     File::ensureDirectoryExists($this->testFullPath);
-    File::put($this->testFullPath . '/file1.php', '<?php echo __("key.in.file1");');
-    File::put($this->testFullPath . '/file2.php', '<?php echo __("key.in.file2");');
+    File::put($this->testFullPath.'/file1.php', '<?php echo __("key.in.file1");');
+    File::put($this->testFullPath.'/file2.php', '<?php echo __("key.in.file2");');
 
     $result = $this->scanner->scan([$this->testPath]);
 
@@ -97,8 +97,8 @@ test('scan processes multiple files', function () {
 });
 
 test('scan handles nested directories', function () {
-    File::ensureDirectoryExists($this->testFullPath . '/subdir');
-    File::put($this->testFullPath . '/subdir/test.php', '<?php echo __("nested.key");');
+    File::ensureDirectoryExists($this->testFullPath.'/subdir');
+    File::put($this->testFullPath.'/subdir/test.php', '<?php echo __("nested.key");');
 
     $result = $this->scanner->scan([$this->testPath]);
 
@@ -107,19 +107,19 @@ test('scan handles nested directories', function () {
 
 test('scan tracks multiple occurrences of same key', function () {
     File::ensureDirectoryExists($this->testFullPath);
-    File::put($this->testFullPath . '/file1.php', '<?php echo __("shared.key");');
-    File::put($this->testFullPath . '/file2.php', '<?php echo __("shared.key");');
+    File::put($this->testFullPath.'/file1.php', '<?php echo __("shared.key");');
+    File::put($this->testFullPath.'/file2.php', '<?php echo __("shared.key");');
 
     $result = $this->scanner->scan([$this->testPath]);
 
     expect($result['shared.key'])->toHaveCount(2);
-    expect($result['shared.key'])->toContain($this->testFullPath . '/file1.php');
-    expect($result['shared.key'])->toContain($this->testFullPath . '/file2.php');
+    expect($result['shared.key'])->toContain($this->testFullPath.'/file1.php');
+    expect($result['shared.key'])->toContain($this->testFullPath.'/file2.php');
 });
 
 test('scan does not duplicate file paths for same key in same file', function () {
     File::ensureDirectoryExists($this->testFullPath);
-    File::put($this->testFullPath . '/test.php', '<?php
+    File::put($this->testFullPath.'/test.php', '<?php
         echo __("repeated");
         echo __("repeated");
         echo __("repeated");
@@ -132,9 +132,9 @@ test('scan does not duplicate file paths for same key in same file', function ()
 
 test('scan only processes PHP files', function () {
     File::ensureDirectoryExists($this->testFullPath);
-    File::put($this->testFullPath . '/test.php', '<?php echo __("php.key");');
-    File::put($this->testFullPath . '/test.txt', '__("txt.key")');
-    File::put($this->testFullPath . '/test.html', '__("html.key")');
+    File::put($this->testFullPath.'/test.php', '<?php echo __("php.key");');
+    File::put($this->testFullPath.'/test.txt', '__("txt.key")');
+    File::put($this->testFullPath.'/test.html', '__("html.key")');
 
     $result = $this->scanner->scan([$this->testPath]);
 
@@ -144,15 +144,15 @@ test('scan only processes PHP files', function () {
 });
 
 test('scan handles multiple paths', function () {
-    $path1 = 'test_scan_1_' . uniqid();
-    $path2 = 'test_scan_2_' . uniqid();
+    $path1 = 'test_scan_1_'.uniqid();
+    $path2 = 'test_scan_2_'.uniqid();
     $fullPath1 = base_path($path1);
     $fullPath2 = base_path($path2);
 
     File::ensureDirectoryExists($fullPath1);
     File::ensureDirectoryExists($fullPath2);
-    File::put($fullPath1 . '/test.php', '<?php echo __("key.from.path1");');
-    File::put($fullPath2 . '/test.php', '<?php echo __("key.from.path2");');
+    File::put($fullPath1.'/test.php', '<?php echo __("key.from.path1");');
+    File::put($fullPath2.'/test.php', '<?php echo __("key.from.path2");');
 
     $result = $this->scanner->scan([$path1, $path2]);
 
@@ -165,9 +165,9 @@ test('scan handles multiple paths', function () {
 
 test('scan skips non-existent paths', function () {
     File::ensureDirectoryExists($this->testFullPath);
-    File::put($this->testFullPath . '/test.php', '<?php echo __("existing.key");');
+    File::put($this->testFullPath.'/test.php', '<?php echo __("existing.key");');
 
-    $result = $this->scanner->scan([$this->testPath, 'nonexistent_path_' . uniqid()]);
+    $result = $this->scanner->scan([$this->testPath, 'nonexistent_path_'.uniqid()]);
 
     expect($result)->toHaveKey('existing.key');
 });

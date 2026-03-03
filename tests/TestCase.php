@@ -2,9 +2,9 @@
 
 namespace Beliven\I18n\Tests;
 
+use Beliven\I18n\I18nServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Beliven\I18n\I18nServiceProvider;
 
 class TestCase extends Orchestra
 {

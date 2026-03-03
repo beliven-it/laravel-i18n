@@ -1,18 +1,18 @@
 <?php
 
-use Beliven\I18n\Services\TranslationImporter;
 use Beliven\I18n\Services\TranslationFileManager;
+use Beliven\I18n\Services\TranslationImporter;
 use Illuminate\Support\Facades\File;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 beforeEach(function () {
-    $this->fileManager = new TranslationFileManager();
+    $this->fileManager = new TranslationFileManager;
     $this->importer = new TranslationImporter($this->fileManager);
-    $this->inputPath = sys_get_temp_dir() . '/test_import_' . uniqid() . '.xlsx';
-    
+    $this->inputPath = sys_get_temp_dir().'/test_import_'.uniqid().'.xlsx';
+
     $this->createExcelFile = function (string $path, array $data): void {
-        $spreadsheet = new Spreadsheet();
+        $spreadsheet = new Spreadsheet;
         $worksheet = $spreadsheet->getActiveSheet();
 
         // Headers
@@ -24,10 +24,10 @@ beforeEach(function () {
         // Data
         $row = 2;
         foreach ($data as $item) {
-            $worksheet->setCellValue('A' . $row, $item['locale']);
-            $worksheet->setCellValue('B' . $row, $item['path']);
-            $worksheet->setCellValue('C' . $row, $item['key']);
-            $worksheet->setCellValue('D' . $row, $item['value']);
+            $worksheet->setCellValue('A'.$row, $item['locale']);
+            $worksheet->setCellValue('B'.$row, $item['path']);
+            $worksheet->setCellValue('C'.$row, $item['key']);
+            $worksheet->setCellValue('D'.$row, $item['value']);
             $row++;
         }
 

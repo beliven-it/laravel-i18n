@@ -16,9 +16,9 @@ class TranslationImporter
         $grouped = $this->groupByLocaleAndFile($data);
 
         $stats = [
-            "files_created" => 0,
-            "keys_added" => 0,
-            "keys_updated" => 0,
+            'files_created' => 0,
+            'keys_added' => 0,
+            'keys_updated' => 0,
         ];
 
         foreach ($grouped as $locale => $files) {
@@ -27,23 +27,23 @@ class TranslationImporter
                 if ($file === '__json__') {
                     $fileExists = $this->fileManager->jsonFileExists($locale);
 
-                    if (!$fileExists) {
-                        $stats["files_created"]++;
+                    if (! $fileExists) {
+                        $stats['files_created']++;
                     }
 
                     if ($overwrite) {
                         // Replace entire JSON file
                         $this->fileManager->saveJsonFile($locale, $keys);
-                        $stats["keys_added"] += count($keys);
+                        $stats['keys_added'] += count($keys);
                     } else {
                         // Merge with existing JSON
                         $existing = $this->fileManager->loadJsonFile($locale);
 
                         foreach ($keys as $key => $value) {
                             if (isset($existing[$key])) {
-                                $stats["keys_updated"]++;
+                                $stats['keys_updated']++;
                             } else {
-                                $stats["keys_added"]++;
+                                $stats['keys_added']++;
                             }
                         }
 
@@ -54,15 +54,15 @@ class TranslationImporter
                     // Handle PHP files
                     $fileExists = $this->fileManager->fileExists($locale, $file);
 
-                    if (!$fileExists) {
-                        $stats["files_created"]++;
+                    if (! $fileExists) {
+                        $stats['files_created']++;
                     }
 
                     if ($overwrite) {
                         // Replace entire file
                         $translations = $this->fileManager->unflattenArray($keys);
                         $this->fileManager->saveFile($locale, $file, $translations);
-                        $stats["keys_added"] += count($keys);
+                        $stats['keys_added'] += count($keys);
                     } else {
                         // Merge with existing
                         $existing = $this->fileManager->loadFile($locale, $file);
@@ -70,9 +70,9 @@ class TranslationImporter
 
                         foreach ($keys as $key => $value) {
                             if (isset($existingFlat[$key])) {
-                                $stats["keys_updated"]++;
+                                $stats['keys_updated']++;
                             } else {
-                                $stats["keys_added"]++;
+                                $stats['keys_added']++;
                             }
                         }
 
@@ -98,12 +98,12 @@ class TranslationImporter
 
         $data = [];
         foreach ($rows as $row) {
-            if (!empty($row[0]) && !empty($row[1]) && !empty($row[2])) {
+            if (! empty($row[0]) && ! empty($row[1]) && ! empty($row[2])) {
                 $data[] = [
-                    "locale" => $row[0],
-                    "path" => $row[1],
-                    "key" => $row[2],
-                    "value" => $row[3] ?? "",
+                    'locale' => $row[0],
+                    'path' => $row[1],
+                    'key' => $row[2],
+                    'value' => $row[3] ?? '',
                 ];
             }
         }
@@ -116,8 +116,8 @@ class TranslationImporter
         $grouped = [];
 
         foreach ($data as $item) {
-            $locale = $item["locale"];
-            $path = $item["path"];
+            $locale = $item['locale'];
+            $path = $item['path'];
 
             // Check if it's a JSON file: lang/en.json
             if (preg_match('/^lang\/[^\/]+\.json$/', $path)) {
@@ -131,15 +131,15 @@ class TranslationImporter
                 );
             }
 
-            if (!isset($grouped[$locale])) {
+            if (! isset($grouped[$locale])) {
                 $grouped[$locale] = [];
             }
 
-            if (!isset($grouped[$locale][$file])) {
+            if (! isset($grouped[$locale][$file])) {
                 $grouped[$locale][$file] = [];
             }
 
-            $grouped[$locale][$file][$item["key"]] = $item["value"];
+            $grouped[$locale][$file][$item['key']] = $item['value'];
         }
 
         return $grouped;
