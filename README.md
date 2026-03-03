@@ -1,5 +1,9 @@
 # Laravel I18n
 
+<br>
+<p align="center"><img src="./repo/banner.png" /></p>
+<br>
+
 <p align="center">
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/beliven-it/laravel-i18n.svg?style=for-the-badge&labelColor=2a2c2e&color=0fbccd)](https://packagist.org/packages/beliven-it/laravel-i18n)
