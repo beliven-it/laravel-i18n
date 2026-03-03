@@ -104,11 +104,22 @@ test('export creates valid excel with correct data', function () {
 
     $spreadsheet = IOFactory::load($this->outputPath);
     $worksheet = $spreadsheet->getActiveSheet();
+    $data = $worksheet->toArray();
 
-    expect($worksheet->getCell('A2')->getValue())->toBe('en');
-    expect($worksheet->getCell('B2')->getValue())->toBe('lang/en/messages.php');
-    expect($worksheet->getCell('C2')->getValue())->toBe('welcome');
-    expect($worksheet->getCell('D2')->getValue())->toBe('Hello World');
+    // Find our specific key in the exported data
+    $foundRow = null;
+    foreach ($data as $row) {
+        if ($row[2] === 'welcome') { // Column C is the key
+            $foundRow = $row;
+            break;
+        }
+    }
+
+    expect($foundRow)->not->toBeNull();
+    expect($foundRow[0])->toBe('en');
+    expect($foundRow[1])->toBe('lang/en/messages.php');
+    expect($foundRow[2])->toBe('welcome');
+    expect($foundRow[3])->toBe('Hello World');
 });
 
 test('export handles multiple files in same locale', function () {
@@ -137,21 +148,42 @@ test('export handles nested directory structure', function () {
 
     $spreadsheet = IOFactory::load($this->outputPath);
     $worksheet = $spreadsheet->getActiveSheet();
+    $data = $worksheet->toArray();
 
-    expect($worksheet->getCell('B2')->getValue())->toBe('lang/en/clinic/detail.php');
+    // Find our specific key in the exported data
+    $foundRow = null;
+    foreach ($data as $row) {
+        if ($row[2] === 'title' && str_contains($row[1], 'clinic/detail.php')) {
+            $foundRow = $row;
+            break;
+        }
+    }
+
+    expect($foundRow)->not->toBeNull();
+    expect($foundRow[1])->toBe('lang/en/clinic/detail.php');
 });
 
 test('export handles null values', function () {
     File::ensureDirectoryExists(lang_path('en'));
-    File::put(lang_path('en/messages.php'), '<?php return ["key" => null];');
+    File::put(lang_path('en/messages.php'), '<?php return ["test_null_key" => null];');
 
     $this->exporter->export($this->outputPath);
 
     $spreadsheet = IOFactory::load($this->outputPath);
     $worksheet = $spreadsheet->getActiveSheet();
+    $data = $worksheet->toArray();
 
-    // PhpSpreadsheet returns null for empty cells, not empty string
-    expect($worksheet->getCell('D2')->getValue())->toBeNull();
+    // Find our specific test key in the exported data
+    $foundRow = null;
+    foreach ($data as $row) {
+        if ($row[2] === 'test_null_key') { // Column C is the key
+            $foundRow = $row;
+            break;
+        }
+    }
+
+    expect($foundRow)->not->toBeNull();
+    expect($foundRow[3])->toBeNull(); // Column D is the value - PhpSpreadsheet returns null for empty cells
 });
 
 test('export handles empty translation files', function () {
@@ -186,8 +218,19 @@ test('export handles special characters in translations', function () {
 
     $spreadsheet = IOFactory::load($this->outputPath);
     $worksheet = $spreadsheet->getActiveSheet();
+    $data = $worksheet->toArray();
 
-    expect($worksheet->getCell('D2')->getValue())->toBe('Quote: "test", Apostrophe: \'test\'');
+    // Find our specific key
+    $foundRow = null;
+    foreach ($data as $row) {
+        if ($row[2] === 'special') {
+            $foundRow = $row;
+            break;
+        }
+    }
+
+    expect($foundRow)->not->toBeNull();
+    expect($foundRow[3])->toBe('Quote: "test", Apostrophe: \'test\'');
 });
 
 test('export handles deeply nested arrays', function () {
@@ -206,9 +249,20 @@ test('export handles deeply nested arrays', function () {
 
     $spreadsheet = IOFactory::load($this->outputPath);
     $worksheet = $spreadsheet->getActiveSheet();
+    $data = $worksheet->toArray();
 
-    expect($worksheet->getCell('C2')->getValue())->toBe('level1.level2.level3.level4');
-    expect($worksheet->getCell('D2')->getValue())->toBe('deep value');
+    // Find our specific deeply nested key
+    $foundRow = null;
+    foreach ($data as $row) {
+        if ($row[2] === 'level1.level2.level3.level4') {
+            $foundRow = $row;
+            break;
+        }
+    }
+
+    expect($foundRow)->not->toBeNull();
+    expect($foundRow[2])->toBe('level1.level2.level3.level4');
+    expect($foundRow[3])->toBe('deep value');
 });
 
 // JSON Translation Tests
@@ -252,9 +306,20 @@ test('export JSON translations have correct structure', function () {
 
     $spreadsheet = IOFactory::load($this->outputPath);
     $worksheet = $spreadsheet->getActiveSheet();
+    $data = $worksheet->toArray();
 
-    expect($worksheet->getCell('A2')->getValue())->toBe('en');
-    expect($worksheet->getCell('B2')->getValue())->toBe('lang/en.json');
-    expect($worksheet->getCell('C2')->getValue())->toBe('My Translation');
-    expect($worksheet->getCell('D2')->getValue())->toBe('Hello World');
+    // Find our specific JSON key
+    $foundRow = null;
+    foreach ($data as $row) {
+        if ($row[2] === 'My Translation') {
+            $foundRow = $row;
+            break;
+        }
+    }
+
+    expect($foundRow)->not->toBeNull();
+    expect($foundRow[0])->toBe('en');
+    expect($foundRow[1])->toBe('lang/en.json');
+    expect($foundRow[2])->toBe('My Translation');
+    expect($foundRow[3])->toBe('Hello World');
 });
