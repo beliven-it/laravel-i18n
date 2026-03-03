@@ -281,7 +281,11 @@ test('import creates JSON translation files from excel', function () {
 
     expect(File::exists(lang_path('en.json')))->toBeTrue();
     $content = $this->fileManager->loadJsonFile('en');
-    expect($content)->toBe(['Welcome' => 'Hello', 'Goodbye' => 'Bye']);
+    // Only assert on the keys we imported (Laravel may have default translations)
+    expect($content)->toHaveKey('Welcome');
+    expect($content)->toHaveKey('Goodbye');
+    expect($content['Welcome'])->toBe('Hello');
+    expect($content['Goodbye'])->toBe('Bye');
 });
 
 test('import handles mixed JSON and PHP translations', function () {
@@ -355,6 +359,9 @@ test('import handles special characters in JSON translations', function () {
     $enContent = $this->fileManager->loadJsonFile('en');
     $frContent = $this->fileManager->loadJsonFile('fr');
 
+    // Assert only on our specific keys (Laravel may have default translations in en.json)
+    expect($enContent)->toHaveKey('Quote Test');
     expect($enContent['Quote Test'])->toBe('He said "hello"');
+    expect($frContent)->toHaveKey('Café');
     expect($frContent['Café'])->toBe('Un café s\'il vous plaît');
 });
