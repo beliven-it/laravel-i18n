@@ -31,13 +31,14 @@ jobs:
         php: [8.4, 8.3]
         laravel: [12.*, 11.*]
         stability: [prefer-lowest, prefer-stable]
+        phpspreadsheet: ['^1.0', '^5.5']
         include:
           - laravel: 12.*
             testbench: 10.*
           - laravel: 11.*
             testbench: 9.*
 
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - PS${{ matrix.phpspreadsheet }} - ${{ matrix.stability }}
 
     steps:
       - name: Checkout code
@@ -57,7 +58,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "phpoffice/phpspreadsheet:${{ matrix.phpspreadsheet }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: List Installed Dependencies
