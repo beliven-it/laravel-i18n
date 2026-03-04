@@ -6,6 +6,26 @@ use Illuminate\Support\Facades\File;
 beforeEach(function () {
     $this->manager = new TranslationFileManager;
     $this->testLangPath = lang_path();
+    
+    // Clean up before each test
+    if (File::exists(lang_path('en/test.php'))) {
+        File::delete(lang_path('en/test.php'));
+    }
+    if (File::exists(lang_path('fr/test.php'))) {
+        File::delete(lang_path('fr/test.php'));
+    }
+    if (File::exists(lang_path('en.json'))) {
+        File::delete(lang_path('en.json'));
+    }
+    if (File::exists(lang_path('fr.json'))) {
+        File::delete(lang_path('fr.json'));
+    }
+    if (File::exists(lang_path('en'))) {
+        File::deleteDirectory(lang_path('en'));
+    }
+    if (File::exists(lang_path('fr'))) {
+        File::deleteDirectory(lang_path('fr'));
+    }
 });
 
 afterEach(function () {
