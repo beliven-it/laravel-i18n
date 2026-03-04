@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\File;
 beforeEach(function () {
     $this->manager = new TranslationFileManager;
     $this->testLangPath = lang_path();
-    
+
     // Clean up before each test
     if (File::exists(lang_path('en/test.php'))) {
         File::delete(lang_path('en/test.php'));
